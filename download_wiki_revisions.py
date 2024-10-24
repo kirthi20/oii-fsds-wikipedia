@@ -75,6 +75,7 @@ def main(page: str, limit: int, data_dir: Path):
             revision_path.parent.mkdir(parents=True, exist_ok=True)
         revision_path.write_text(wiki_revision)
     
+    count_files(data_dir)
     print("Done!") # You should call count_revisions() here and print the number of revisions
                    # You should also pass an 'update' argument so that you can decide whether
                    # to update and refresh or whether to simply count the revisions.   
@@ -95,6 +96,20 @@ def validate_page(page_name: str, page_xml: str) -> None:
     except ValueError:
         raise ValueError(f"Page {page_name} does not exist")
 
+def count_files(data_dir:Path, folders:bool=False):
+    count = 0
+    
+    for item in data_dir.iterdir():
+        if item.is_file():
+            count += 1
+        elif item.is_dir():
+            # If folders is True, count the folder as well
+            if folders:
+                count += 1
+            # Recursively count files in the subdirectory
+            count += count_files(item, folders)
+    
+    return count
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
