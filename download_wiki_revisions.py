@@ -57,7 +57,7 @@ def find_yearmonth(revision: str) -> str:
     return extract_yearmonth(find_timestamp(revision))
 
 
-def main(page: str, limit: int, data_dir: Path):
+def main(page: str, limit: int, data_dir: Path, update: bool):
     """
     Downloads the main page (with revisions) for the given page title.
     Organizes the revisions into a folder structure like
@@ -75,7 +75,7 @@ def main(page: str, limit: int, data_dir: Path):
             revision_path.parent.mkdir(parents=True, exist_ok=True)
         revision_path.write_text(wiki_revision)
     
-    count_files(data_dir)
+    print(f"# of files downloaded: {count_files(data_dir, update)}")
     print("Done!") # You should call count_revisions() here and print the number of revisions
                    # You should also pass an 'update' argument so that you can decide whether
                    # to update and refresh or whether to simply count the revisions.   
@@ -125,5 +125,11 @@ if __name__ == "__main__":
         default=10,
         help="Number of revisions to download",
     )
+    parser.add_argument(
+        "--update",
+        type=bool,
+        default=False,
+        help="Whether or not to update (?)",
+    )
     args = parser.parse_args()
-    main(page=args.page, limit=args.limit, data_dir=DATA_DIR)
+    main(page=args.page, limit=args.limit, data_dir=DATA_DIR, update=args.update)
